@@ -386,7 +386,7 @@ In this task, you will apply application settings using the Microsoft Azure Port
 |                          |                                                                                                                                                   |
 | ------------------------ | :-----------------------------------------------------------------------------------------------------------------------------------------------: |
 | **Application Key**      |                                                                     **Value**                                                                     |
-| computerVisionApiUrl     | Computer Vision API endpoint you copied earlier. Append **/recognizeText?mode=Printed** to the end. Example:  https://westus.api.cognitive.microsoft.com/vision/v2.0/recognizeText?mode=Printed |
+| computerVisionApiUrl     | Computer Vision API endpoint you copied earlier. Append **/vision/v2.0/ocr** to the end. Example:  https://westus.api.cognitive.microsoft.com/vision/v2.0/ocr |
 | computerVisionApiKey     |                                                              Computer Vision API key                                                              |
 | eventGridTopicEndpoint   |                                                             Event Grid Topic endpoint                                                             |
 | eventGridTopicKey        |                                                            Event Grid Topic access key                                                            |
