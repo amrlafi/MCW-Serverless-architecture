@@ -45,7 +45,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 3: Publish the Function App from Visual Studio](#task-3-publish-the-function-app-from-visual-studio)
   - [Exercise 3: Create functions in the portal](#exercise-3-create-functions-in-the-portal)
     - [Help references](#help-references-2)
-    - [Task 1: Create function to save license plate data to Azure Cosmos DB](#task-1-create-function-to-save-license-plate-data-to-azure-cosmos-db)
+    - [Task 1: Create function to save license plate data to Table Storage](#task-1-create-function-to-save-license-plate-data-to-table-storage)
     - [Task 2: Add an Event Grid subscription to the SavePlateData function](#task-2-add-an-event-grid-subscription-to-the-saveplatedata-function)
     - [Task 3: Add an Azure Cosmos DB output to the SavePlateData function](#task-3-add-an-azure-cosmos-db-output-to-the-saveplatedata-function)
     - [Task 4: Create function to save manual verification info to Azure Cosmos DB](#task-4-create-function-to-save-manual-verification-info-to-azure-cosmos-db)
@@ -58,9 +58,9 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 2: Enable Application Insights integration in your Function Apps](#task-2-enable-application-insights-integration-in-your-function-apps)
     - [Task 3: Use the Live Metrics Stream to monitor functions in real time](#task-3-use-the-live-metrics-stream-to-monitor-functions-in-real-time)
     - [Task 4: Observe your functions dynamically scaling when resource-constrained](#task-4-observe-your-functions-dynamically-scaling-when-resource-constrained)
-  - [Exercise 5: Explore your data in Azure Cosmos DB](#exercise-5-explore-your-data-in-azure-cosmos-db)
+  - [Exercise 5: Explore your data using Storage Explorer](#exercise-5-explore-your-data-in-storage-explorer)
     - [Help references](#help-references-4)
-    - [Task 1: Use the Azure Cosmos DB Data Explorer](#task-1-use-the-azure-cosmos-db-data-explorer)
+    - [Task 1: Use the Azure Cosmos DB Data Explorer](#task-1-Use-the-Storage-Explorer-to-explore-data)
   - [Exercise 6: Create the data export workflow](#exercise-6-create-the-data-export-workflow)
     - [Help references](#help-references-5)
     - [Task 1: Create the Logic App](#task-1-create-the-logic-app)
@@ -128,7 +128,7 @@ In this exercise, you will provision a blob storage account using the Hot tier, 
 | Creating a storage account (blob hot tier) | <https://docs.microsoft.com/azure/storage/common/storage-create-storage-account?toc=%2fazure%2fstorage%2fblobs%2ftoc.json%23create-a-storage-account> |
 | Creating a function app                    |                   <https://docs.microsoft.com/azure/azure-functions/functions-create-function-app-portal>                    |
 | Concepts in Event Grid                     |                                                <https://docs.microsoft.com/azure/event-grid/concepts>                                                 |
-| Creating an Azure Cosmos DB account        |                   <https://docs.microsoft.com/azure/cosmos-db/manage-account>                    |
+| Table Storage                              | <https://docs.microsoft.com/en-us/azure/storage/tables/table-storage-overview> |
 
 ### Task 1: Provision the storage account
 
@@ -244,75 +244,49 @@ In this exercise, you will provision a blob storage account using the Hot tier, 
 
 10. Paste the values into a text editor, such as Notepad, for later reference.
 
-### Task 4: Provision the Azure Cosmos DB account
+### Task 4: Provision the Table Storage account
 
 1.  Navigate to the Azure Management portal, <http://portal.azure.com>.
 
-2.  Select **+ Create a resource, Database, Azure Cosmos DB**.
+2.  Select **+ Create a resource, Storage, Storage account - blob, file,table, queue**.
 
-    ![In Azure Portal, in the menu, New is selected. Under Azure marketplace, Databases is selected, and under Featured, Azure Cosmos DB is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image23.png 'Azure Portal')
+    ![In Azure Portal, in the menu, New is selected. Under Azure marketplace, Storage is selected, and under Featured, Storage account - blob, file,table, queue is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-account-step-1.png 'Azure Portal')
 
-3.  On the **Create new Azure Cosmos DB** **account** blade, specify the following configuration options:
+3.  On the **Create storage** **account** blade, specify the following configuration options:
 
-    a. **ID**: Unique value for the App name (ensure the green check mark appears).
+    a. Specify the **Resource Group** ServerlessArchitecture.
 
-    b. Select the **SQL** API.
+    b. **Storage account name**: Unique name such as **licenseplates**+**your name**
 
-    c. Specify the **Resource Group** ServerlessArchitecture.
+    c. Select the same **location** as your Resource Group if available. Otherwise, select the next closest **region**.
 
-    d. Select the same **location** as your Resource Group if available. Otherwise, select the next closest **region**.
+    d. Select **Standard** for **Performance**.
 
-    e. Ensure **Enable geo-redundancy** is checked.
+    e. Select **StorageV2** for **Account kind**.
 
-    ![Fields in the Azure Cosmos DB blade are set to the previously defined settings.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image24.png 'Azure Cosmos DB blade')
+    f. Leave **Replication** and **Access tier** as is.
 
-4.  Select **Create**.
+     ![Screenshot.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-account-step-2.PNG 'Create Storage account')
 
-    ![Screenshot of the Create button.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image13.png 'Create button')
+4.  Select **Review + create**, then **create**.
 
-5.  After the Azure Cosmos DB account has completed provisioning, open the account by opening the **ServerlessArchitecture** resource group, and then selecting the **Azure Cosmos DB** account name.
+5.  After the Azure Table Storage account has completed provisioning, open the created resource licenseplates**your name**.
 
-6.  On the **Cosmos DB overview** blade, select **+ Add Collection**.
+    ![Your deployment is complete](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-account-step-3.PNG 'Create Storage account')
 
-    ![In the Tollbooths blade, Overview is selected, and the Add Collection button is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image25.png 'Tollbooths blade')
+6.  Navigate to the create table storage resource, then select "Table, +Table"
 
-7.  On the **Add Collection** blade, specify the following configuration options:
+    ![Add table](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-account-step-4.PNG 'Create new table')
 
-    a. Enter **LicensePlates** for the **database id**.
+7.  Create two tables, **NeedsManualReview** and **Processed**
 
-    b. Enter **Processed** for the **collection id**.
+    ![New tables](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-account-step-5.PNG 'Tables')
 
-    c. Storage capacity: **Fixed**
+8.  Navigate to **Access keys** under **Settings**, and copy the **Connection String** for **key 1**
 
-    d. Throughput: **5000**
+    ![Access keys](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-account-step-6.PNG 'Settings')
 
-    ![In the Add Collection blade, fields are set to the previously defined settings.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image26.png 'Add Collection blade')
-
-8)  Select **OK**.
-
-9)  Select **New Collection** to add another collection.
-
-10) On the **Add Collection** blade, specify the following configuration options:
-
-    a. Enter **LicensePlates** for the database id.
-
-    b. Enter **NeedsManualReview** for the collection id.
-
-    c. Storage capacity: **Fixed**
-
-    d. Throughput: **5000**
-
-    ![In the Add Collection blade, fields are set to the previously defined values.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image27.png 'Add Collection blade')
-
-11) Select **OK**.
-
-12) Select **Keys** under Settings in the menu.
-
-13) Underneath the **Read-write Keys** tab within the Keys blade, copy the **URI** and **Primary Key** values.
-
-    ![In the tollbooth - Keys blade, under Settings, Keys is selected. On the Read-write Keys tab, the copy buttons for the URL and Primary Key fields are selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image28.png 'tollbooth - Keys blade')
-
-14) Paste the values into a text editor, such as Notepad, for later reference.
+7.  Copy and paste the **Connection String** value into a text editor, such as Notepad, for later reference.
 
 ### Task 5: Provision the Computer Vision API service
 
@@ -390,10 +364,8 @@ In this task, you will apply application settings using the Microsoft Azure Port
 | computerVisionApiKey     |                                                              Computer Vision API key                                                              |
 | eventGridTopicEndpoint   |                                                             Event Grid Topic endpoint                                                             |
 | eventGridTopicKey        |                                                            Event Grid Topic access key                                                            |
-| cosmosDBEndPointUrl      |                                                                   Cosmos DB URI                                                                   |
-| cosmosDBAuthorizationKey |                                                               Cosmos DB Primary Key                                                               |
-| cosmosDBDatabaseId       |                                                       Cosmos DB database id (LicensePlates)                                                       |
-| cosmosDBCollectionId     |                                                   Cosmos DB processed collection id (Processed)                                                   |
+| tableStorageConnection   |                                                       Cosmos DB database id (LicensePlates)                                                       |
+| tableName                |                                                   Cosmos DB processed collection id (Processed)                                                   |
 | exportCsvContainerName   |                                                  Blob storage CSV export container name (export)                                                  |
 | blobStorageConnection    |                                                          Blob storage connection string                                                           |
 
@@ -505,9 +477,9 @@ Create two new Azure Functions written in Node.js, using the Azure portal. These
 | Create your first function in the Azure portal                    |        <https://docs.microsoft.com/azure/azure-functions/functions-create-first-azure-function>         |
 | Store unstructured data using Azure Functions and Azure Cosmos DB | <https://docs.microsoft.com/azure/azure-functions/functions-integrate-store-unstructured-data-cosmosdb> |
 
-### Task 1: Create function to save license plate data to Azure Cosmos DB
+### Task 1: Create function to save license plate data to Table Storage
 
-In this task, you will create a new Node.js function triggered by Event Grid and that outputs successfully processed license plate data to Azure Cosmos DB.
+In this task, you will create a new Node.js function triggered by Event Grid and that outputs successfully processed license plate data to a Table Storage.
 
 1.  Using a new tab or instance of your browser navigate to the Azure Management portal, <http://portal.azure.com>.
 
@@ -863,33 +835,33 @@ In this task, you will change the Computer Vision API to the Free tier. This wil
 
 
     >**Note**:  If you do not see data flow after a short period, consider restarting the Function App.
-
+    
     ![In the Live Metrics Stream window, 11 servers are now online.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image74.png "Live Metrics Stream window ")
 
 5.  After this has run for some time, close the UploadImages console to stop uploading photos.
 
 6.  Navigate back to the **Computer Vision** API and set the pricing tier back to **S1 Standard**.
 
-## Exercise 5: Explore your data in Azure Cosmos DB
+## Exercise 5: Explore your data in Storage Explorer
 
 **Duration**: 15 minutes
 
-In this exercise, you will use the Azure Cosmos DB Data Explorer in the portal to view saved license plate data.
+In this exercise, you will use the Storage Explorer to view saved license plate data.
 
 ### Help references
 
 |                       |                                                                 |
 | --------------------- | :-------------------------------------------------------------: |
 | **Description**       |                            **Links**                            |
-| About Azure Cosmos DB | <https://docs.microsoft.com/azure/cosmos-db/introduction> |
+| Get started with Storage Explorer | <https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows> |
 
-### Task 1: Use the Azure Cosmos DB Data Explorer
+### Task 1: Use the Storage Explorer to explore data
 
-1.  Open your Azure Cosmos DB account by opening the **ServerlessArchitecture** resource group, and then selecting the **Azure Cosmos DB account** name.
+1.  Click the **Manage Account** icon, and then **Add an account...**.
 
-2.  Select **Data Explorer** from the menu.
+2.  On the **Connect to Azure Storage** wizard, select **Use a connection string**
 
-    ![In the Tollbooth - Data Explorer blade, Data Explorer is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image75.png 'Tollbooth - Data Explorer blade')
+    ![Select Use a connection string](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-explorer-step-1.PNG 'Storage Explorer - Connect to Azure Storage')
 
 3.  Expand the **Processed** collection, then select **Documents**. This will list each of the JSON documents added to the collection.
 
