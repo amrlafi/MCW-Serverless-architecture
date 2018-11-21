@@ -863,31 +863,17 @@ In this exercise, you will use the Storage Explorer to view saved license plate 
 
     ![Select Use a connection string](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-explorer-step-1.PNG 'Storage Explorer - Connect to Azure Storage')
 
-3.  Expand the **Processed** collection, then select **Documents**. This will list each of the JSON documents added to the collection.
+3.  Use the Table Storage **connection string** you copied earlier. 
 
-4.  Select one of the documents to view its contents. The first four properties are ones that were added by your functions. The remaining properties are standard and are assigned by Cosmos DB.
+4.  On the **Explorer** left panel, expand **Storage Accounts** , and navigate to the storage account you created, and expand **Tables**.
 
-    ![Under Collections, Processed is expanded, and Documents is selected. On the Documents tab, a document is selected, and to the side, the first four properties of the document (fileName, licencePlateText, timeStamp, and exported) are circled.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image76.png 'Tollbooth - Data Explorer blade')
+    ![Navigate to the storage account](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-explorer-step-2.PNG 'Storage Explorer - Navigation')
 
-5.  Expand the **NeedsManualReview** collection, then select **Documents**.
+5.  Double-click the **NeedsManualReview** table, and observe entries.
 
-6.  Select one of the documents to view its contents. Notice that the filename is provided, as well as a property named "resolved". While this is out of scope for this lab, those properties can be used together to provide a manual process for viewing the photo and entering the license plate.
+    ![Observe tables](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/storage-explorer-step-3.PNG 'Storage Explorer - Tables')
 
-    ![Under Collections, NeedsManualReview is expanded, and Documents is selected. On the Documents tab, a document is selected, and to the side, the first four properties of the document (fileName, licencePlateText, timeStamp, and resolved) are circled.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image77.png 'Tollbooth - Data Explorer blade')
 
-7.  Right-click on the **Processed** collection and select **New SQL Query**.
-
-    ![Under Collections, LicencePlates is expanded, and Processed is selected. From its right-click menu, New SQL Query is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image78.png 'Tollbooth - Data Explorer blade')
-
-8.  Modify the SQL query to count the number of processed documents that have not been exported:
-
-```
-SELECT COUNT(c.id) FROM c WHERE c.exported = false
-```
-
-9.  Execute the query and observe the results. In our case, we have 1,369 processed documents that need to be exported.
-
-    ![On the Query 1 tab, under Execute Query, the previously defined SQL query displays. Under Results, the number 1369 is circled.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image79.png 'Query 1 tab')
 
 ## Exercise 6: Create the data export workflow
 
