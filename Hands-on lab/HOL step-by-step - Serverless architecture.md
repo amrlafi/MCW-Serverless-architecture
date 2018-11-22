@@ -572,7 +572,7 @@ In this task, you will add an Table Storage output binding to the SavePlateData 
 
 2.  Add **TableStorage** with the connection string value observed earlier upon creating the Table Storage.
 
-    ![Add a new settings](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-application-settings-step-tableStorage.PNG 'SavePlateData blade') 
+    ![Add a new settings](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-application-settings-step-TableStorage.PNG 'SavePlateData blade') 
 
 3.  Click **Save**.
 
