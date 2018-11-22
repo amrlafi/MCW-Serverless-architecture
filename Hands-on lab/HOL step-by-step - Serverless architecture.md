@@ -46,8 +46,8 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Exercise 3: Create functions in the portal](#exercise-3-create-functions-in-the-portal)
     - [Help references](#help-references-2)
     - [Task 1: Create function to save license plate data to Table Storage](#task-1-create-function-to-save-license-plate-data-to-table-storage)
-    - [Task 2: Add an Event Grid subscription to the SavePlateData function](#task-2-add-an-event-grid-subscription-to-the-saveplatedata-function)
-    - [Task 3: Add an Azure Cosmos DB output to the SavePlateData function](#task-3-add-an-azure-cosmos-db-output-to-the-saveplatedata-function)
+    - [Task 2: Add a Table Storage output to the SavePlateData function](#Task-2-Add-a-Table-Storage-output-to-the-SavePlateData-function)
+    - [Task 3: Add an Event Grid subscription to the SavePlateData function](#task-3-add-an-event-grid-subscription-to-the-saveplatedata-function)
     - [Task 4: Create function to save manual verification info to Azure Cosmos DB](#task-4-create-function-to-save-manual-verification-info-to-azure-cosmos-db)
     - [Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function](#task-5-add-an-event-grid-subscription-to-the-queueplateformanualcheckup-function)
     - [Task 6: Add an Azure Cosmos DB output to the QueuePlateForManualCheckup function](#task-6-add-an-azure-cosmos-db-output-to-the-queueplateformanualcheckup-function)
@@ -60,7 +60,6 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 4: Observe your functions dynamically scaling when resource-constrained](#task-4-observe-your-functions-dynamically-scaling-when-resource-constrained)
   - [Exercise 5: Explore your data using Storage Explorer](#exercise-5-explore-your-data-in-storage-explorer)
     - [Help references](#help-references-4)
-    - [Task 1: Use the Azure Cosmos DB Data Explorer](#task-1-Use-the-Storage-Explorer-to-explore-data)
   - [Exercise 6: Create the data export workflow](#exercise-6-create-the-data-export-workflow)
     - [Help references](#help-references-5)
     - [Task 1: Create the Logic App](#task-1-create-the-logic-app)
@@ -467,15 +466,15 @@ In this task, you will publish the Function App from the starter project in Visu
 
 **Duration**: 45 minutes
 
-Create two new Azure Functions written in Node.js, using the Azure portal. These will be triggered by Event Grid and output to Azure Cosmos DB to save the results of license plate processing done by the ProcessImage function.
+Create two new Azure Functions written in .Net/C# Script, using the Azure portal. These will be triggered by Event Grid and output to Azure Cosmos DB to save the results of license plate processing done by the ProcessImage function.
 
 ### Help references
 
 |                                                                   |                                                                                                               |
 | ----------------------------------------------------------------- | :-----------------------------------------------------------------------------------------------------------: |
 | **Description**                                                   |                                                   **Links**                                                   |
-| Create your first function in the Azure portal                    |        <https://docs.microsoft.com/azure/azure-functions/functions-create-first-azure-function>         |
-| Store unstructured data using Azure Functions and Azure Cosmos DB | <https://docs.microsoft.com/azure/azure-functions/functions-integrate-store-unstructured-data-cosmosdb> |
+| Create your first function in the Azure portal                    |        <https://docs.microsoft.com/azure/azure-functions/functions-create-first-azure-function>               |
+| Azure Table storage bindings for Azure Functions                  | <https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-table>                     |
 
 ### Task 1: Create function to save license plate data to Table Storage
 
@@ -487,7 +486,25 @@ In this task, you will create a new Node.js function triggered by Event Grid and
 
 3.  Select **Functions** in the menu. In the **Functions** blade, select **+ New Function**.
 
-    ![In the TollBoothEvents2 blade, in the pane under Function Apps, TollBoothEvents2 is expanded, and Functions is selected. In the pane, the + New function button is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image43.png 'TollBoothEvents2 blade')
+    ![In the TollBoothEvents2 blade, in the pane under Function Apps, TollBoothEvents2 is expanded, and Functions is selected. In the pane, the + New function button is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-1.png 'TollBoothEvents2 blade')
+
+    ![Wait until provisioning is done](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-2.png 'TollBoothEvents2 blade')
+
+4.  Select **In-portal** authoring.
+
+    ![In-portal](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-3.png 'TollBoothEvents2 blade')
+
+5.  Select **More templates...**.
+
+    ![More templates](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-4.png 'TollBoothEvents2 blade')
+
+6.  Select "Azure Event Grid Trigger", Install **Extensions** if required.
+
+    ![Extensions](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-5.png 'TollBoothEvents2 blade')
+
+7.  Name the function as **SavePlateData**, and then select **Create**.
+
+    ![Function Name](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-6.png 'TollBoothEvents2 blade')
 
 4.  Event **event grid** into the template search form, then select the **Event Grid trigger** template.
 
@@ -495,35 +512,67 @@ In this task, you will create a new Node.js function triggered by Event Grid and
 
 5.  In the New Function form, fill out the following properties:
 
-    a. **Language**: JavaScript
+    a. **Language**: C#
 
     b. **Name**: SavePlateData
 
     ![In the New Function form, JavaScript is selected from the Language drop-down menu, and SavePlateData is typed in the Name field.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image45.png 'Event Grid trigger, New Function form')
 
-6)  Select **Create**.
+6.  Select **Create**.
 
-7)  Replace the code in the new SavePlateData function with the following:
+7.  Replace the code in the new SavePlateData function with the following:
 
 ```
-    module.exports = function (context, eventGridEvent) {
-        context.log(typeof eventGridEvent);
-        context.log(eventGridEvent);
+    #r "Microsoft.Azure.EventGrid"
+    #r "Newtonsoft.Json"
 
-        context.bindings.outputDocument = {
-            fileName : eventGridEvent.data["fileName"],
-            licensePlateText : eventGridEvent.data["licensePlateText"],
-            timeStamp : eventGridEvent.data["timeStamp"],
-            exported : false
+    using Microsoft.Azure.EventGrid.Models;
+    using Newtonsoft.Json;
+
+    public static void Run(EventGridEvent eventGridEvent, ICollector<LicensePlateData> output,  ILogger log)
+    {
+        var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(eventGridEvent.Data.ToString());
+
+        output.Add(new LicensePlateData() { PartitionKey = "Plate", 
+                                            RowKey  = data["fileName"], 
+                                            FileName  = data["fileName"], 
+                                            LicensePlateText = data["licensePlateText"], 
+                                            TimeStamp = DateTime.Parse(data["timeStamp"]),
+                                            Exported = false
+                                            });
+
+        log.LogInformation(eventGridEvent.Data.ToString());
+    }
+
+        public class LicensePlateData
+        {
+            public string PartitionKey { get; set; }
+            
+            public string RowKey { get; set; }
+
+            public string FileName { get; set; }
+            
+            public string LicensePlateText { get; set; }
+            
+            public DateTime TimeStamp { get; set; }
+            
+            public bool Exported { get; set; }
         }
-
-        context.done();
-    };
 ```
 
 8.  Select **Save**.
 
-### Task 2: Add an Event Grid subscription to the SavePlateData function
+### Task 2: Add a Table Storage output to the SavePlateData function
+
+In this task, you will add an Table Storage output binding to the SavePlateData function, enabling it to save its data to the Processed Table. 
+
+1.  Navigate to the function **Application Settings** and click **+ Add new Settings**
+
+    ![Add a new settings](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-application-settings-step.PNG 'SavePlateData blade')    
+
+2.  Add **TableStorage** with the connection string value observed earlier upon creating the Table Storage.
+
+### Task 3: Add an Event Grid subscription to the SavePlateData function
 
 In this task, you will add an Event Grid subscription to the SavePlateData function. This will ensure that the events sent to the Event Grid topic containing the savePlateData event type are routed to this function.
 
