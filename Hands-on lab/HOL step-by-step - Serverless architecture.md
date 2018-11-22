@@ -366,7 +366,6 @@ In this task, you will apply application settings using the Microsoft Azure Port
 | exportCsvContainerName   |                                                  Blob storage CSV export container name (export)                                                  |
 | blobStorageConnection    |                                                          Blob storage connection string                                                           |
 
-![In the Application Settings section, the previously mentioned key / value pairs are called out with a purple line.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image35.png 'ApplicationSettings section')
 
 5.  Select **Save**.
 
