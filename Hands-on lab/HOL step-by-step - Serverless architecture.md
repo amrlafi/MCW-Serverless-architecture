@@ -572,6 +572,27 @@ In this task, you will add an Table Storage output binding to the SavePlateData 
 
 2.  Add **TableStorage** with the connection string value observed earlier upon creating the Table Storage.
 
+    ![Add a new settings](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-application-settings-step-tableStorage.PNG 'SavePlateData blade') 
+
+3.  Click **Save**.
+
+4.  Go to **Integrate** panel (under **SavePlateData** menu item), and click **+ New Output** and select **Azure Table Storage**.
+
+    ![Add a new settings](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-9.PNG 'SavePlateData blade')
+
+5.  Install Table Storage **Extension** if required.
+
+    ![Add a new settings](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-10.PNG 'SavePlateData blade')
+
+6.  Configure the newly created **Azure Table Storage output**:
+
+    a. Set **Table parameter name** to **output**.
+    b. Set **Storage account connection** to **TableStorage**.
+    c. Set **Table name** to **Processed**.
+
+        ![Output table](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-11.PNG 'SavePlateData blade')
+7. Click **Save**.
+
 ### Task 3: Add an Event Grid subscription to the SavePlateData function
 
 In this task, you will add an Event Grid subscription to the SavePlateData function. This will ensure that the events sent to the Event Grid topic containing the savePlateData event type are routed to this function.
@@ -596,31 +617,6 @@ In this task, you will add an Event Grid subscription to the SavePlateData funct
 
     ![In the Create Event Subscription blade, fields are set to the previously defined settings.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image47.png)
 
-### Task 3: Add an Azure Cosmos DB output to the SavePlateData function
-
-In this task, you will add an Azure Cosmos DB output binding to the SavePlateData function, enabling it to save its data to the Processed collection.
-
-1.  Expand the SavePlateData function in the menu, the select **Integrate**.
-
-2.  Select **+ New Output** under Outputs, select **Azure Cosmos DB** from the list of outputs, then select **Select**.
-
-    ![In the SavePlateData blade, in the pane under Function Apps, TollBoothEvents2, Functions, and SavePlateData are expanded, and Integrate is selected. In the pane, + New Output is selected under Outputs. In the list of outputs, the Azure Cosmos DB tile is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image48.png 'SavePlateData blade')
-
-3.  In the Azure Cosmos DB output form, select **new** next to the Azure Cosmos DB account connection field.
-
-    ![The New button is selected next to the Azure Cosmos DB account connection field.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image49.png 'New button')
-
-4.  Select your Cosmos DB account from the list that appears.
-
-5.  Specify the following configuration options in the Azure Cosmos DB output form:
-
-    a. Enter **LicensePlates** into the **database name** field.
-
-    b. Enter **Processed** into the **collection name** field.
-
-    ![Under Azure Cosmos DB output the following field values display: Document parameter name, outputDocument; Collection name, Processed; Database name, LicensePlates; Azure Cosmos DB account conection, tollbooths_DOCUMENTDB.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image50.png 'Azure Cosmos DB output section')
-
-6.  Select **Save**.
 
 ### Task 4: Create function to save manual verification info to Azure Cosmos DB
 
