@@ -48,7 +48,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 1: Create function to save license plate data to Table Storage](#task-1-create-function-to-save-license-plate-data-to-table-storage)
     - [Task 2: Add a Table Storage output to the SavePlateData function](#Task-2-Add-a-Table-Storage-output-to-the-SavePlateData-function)
     - [Task 3: Add an Event Grid subscription to the SavePlateData function](#task-3-add-an-event-grid-subscription-to-the-saveplatedata-function)
-    - [Task 4: Create function to save manual verification info to Azure Cosmos DB](#task-4-create-function-to-save-manual-verification-info-to-azure-cosmos-db)
+    - [Task 4: Create function to save manual verification info to Table Storage](#task-4-create-function-to-save-manual-verification-info-to-table-storage)
     - [Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function](#task-5-add-an-event-grid-subscription-to-the-queueplateformanualcheckup-function)
     - [Task 6: Add an Azure Cosmos DB output to the QueuePlateForManualCheckup function](#task-6-add-an-azure-cosmos-db-output-to-the-queueplateformanualcheckup-function)
     - [Task 7: Configure custom event types for the new Event Grid subscriptions](#task-7-configure-custom-event-types-for-the-new-event-grid-subscriptions)
@@ -587,10 +587,13 @@ In this task, you will add an Table Storage output binding to the SavePlateData 
 6.  Configure the newly created **Azure Table Storage output**:
 
     a. Set **Table parameter name** to **output**.
+
     b. Set **Storage account connection** to **TableStorage**.
+
     c. Set **Table name** to **Processed**.
 
         ![Output table](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/function-app-events-step-11.PNG 'SavePlateData blade')
+
 7. Click **Save**.
 
 ### Task 3: Add an Event Grid subscription to the SavePlateData function
@@ -618,97 +621,58 @@ In this task, you will add an Event Grid subscription to the SavePlateData funct
     ![In the Create Event Subscription blade, fields are set to the previously defined settings.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image47.png)
 
 
-### Task 4: Create function to save manual verification info to Azure Cosmos DB
+### Task 4: Create function to save manual verification info to Table Storage
 
-In this task, you will create a new Node.js function triggered by Event Grid and outputs information about photos that need to be manually verified to Azure Cosmos DB.
+In this task, you will create a new C# Script function triggered by Event Grid and outputs information about photos that need to be manually verified to Table Storage.
 
-1.  Using a new tab or instance of your browser navigate to the Azure Management portal, <http://portal.azure.com>.
+1.  Follow the same steps as in Task 3. Change the following:
 
-2.  Open the **ServerlessArchitecture** resource group, then select the Azure Function App you created whose name ends with **Events**. If you did not use this naming convention, make sure you select the Function App that you [did not]{.underline} deploy to in the previous exercise.
+    a. Function name: **QueuePlateForManualCheckup**.
 
-3.  Select **Functions** in the menu. In the **Functions** blade, select **+ New Function**.
+    b. Function code: 
 
-    ![In the pane of the TollBoothEvents2 blade under Functions Apps, TollBoothEvents2 is expanded, and Functions is selected. In the pane, + New function is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image43.png 'TollBoothEvents2 blade')
+    ```
+        #r "Microsoft.Azure.EventGrid"
+        #r "Newtonsoft.Json"
 
-4.  Enter **event grid** into the template search form, then select the **Event Grid trigger** template.
+        using Microsoft.Azure.EventGrid.Models;
+        using Newtonsoft.Json;
 
-    ![Event grid displays in the choose a template search field, and in the results, Event Grid trigger displays.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image44.png 'Event grid trigger')
+        public static void Run(EventGridEvent eventGridEvent, ICollector<LicensePlateData> output,  ILogger log)
+        {
+            var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(eventGridEvent.Data.ToString());
 
-5.  In the **New Function** form, fill out the following properties:
+            output.Add(new LicensePlateData() { PartitionKey = "Plate", 
+                                                RowKey  = data["fileName"], 
+                                                FileName  = data["fileName"], 
+                                                LicensePlateText = "", 
+                                                TimeStamp = DateTime.Parse(data["timeStamp"]),
+                                                Resolved = false
+                                                });
 
-    a. **Language**: JavaScript
-
-    b. **Name**: QueuePlateForManualCheckup
-
-    ![In the New Function form, JavaScript is selected from the Language drop-down menu, and QueuePlateForManualCheckup is typed in the Name field.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image51.png 'Event Grid trigger, New Function form')
-
-6.  Select **Create**.
-
-7.  Replace the code in the new QueuePlateForManualCheckup function with the following:
-
-```
-    module.exports = function (context, eventGridEvent) {
-        context.log(typeof eventGridEvent);
-        context.log(eventGridEvent);
-
-        context.bindings.outputDocument = {
-            fileName : eventGridEvent.data["fileName"],
-            licensePlateText : "",
-            timeStamp : eventGridEvent.data["timeStamp"],
-            resolved : false
+            log.LogInformation(eventGridEvent.Data.ToString());
         }
 
-        context.done();
-    };
-```
+            public class LicensePlateData
+            {
+                public string PartitionKey { get; set; }
+                
+                public string RowKey { get; set; }
 
-8.  Select **Save**.
+                public string FileName { get; set; }
+                
+                public string LicensePlateText { get; set; }
+                
+                public DateTime TimeStamp { get; set; }
+                
+                public bool Resolved { get; set; }
+            }
+    ```
 
-### Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function
+    c. Table to persist data to: **NeedsManualReview**
 
-In this task, you will add an Event Grid subscription to the QueuePlateForManualCheckup function. This will ensure that the events sent to the Event Grid topic containing the queuePlateForManualCheckup event type are routed to this function.
+    d. Event Grid Subscription name: **queueplateformanualcheckupsub**
 
-1.  With the QueuePlateForManualCheckup function open, select **Add Event Grid subscription**.
-
-    ![In the QueuePlateForManualCheckup blade, the Add Event Grid subscription link is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image52.png 'QueuePlateForManualCheckup blade')
-
-2.  On the **Create Event Subscription** blade, specify the following configuration options:
-
-    a. **Name**: Unique value for the App name (ensure the green check mark appears). Provide a name similar to queueplateformanualcheckupsub.
-
-    b. For **Topic Type**, select **Event Grid Topics**.
-
-    c. Select your **subscription** and **ServerlessArchitecture** resource group.
-
-    d. For **Instance**, select your Event Grid topic.
-
-    e. Check **Subscribe to all event types**. You will enter a custom event type later.
-
-3.  Leave the remaining fields at their default values and select **Create**.
-
-    ![In the Create Event Subscription blade, fields are set to the previously defined settings.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image53.png)
-
-### Task 6: Add an Azure Cosmos DB output to the QueuePlateForManualCheckup function
-
-In this task, you will add an Azure Cosmos DB output binding to the QueuePlateForManualCheckup function, enabling it to save its data to the NeedsManualReview collection.
-
-1.  Expand the QueuePlateForManualCheckup function in the menu, the select **Integrate**.
-
-2.  Select **+ New Output** under Outputs, select **Azure Cosmos DB** from the list of outputs, then select **Select**.
-
-    ![In the blade, in the pane under Function Apps, TollBoothEvents2\ Functions\QueuePlateForManualCheckup are expanded, and Integrate is selected. In the pane, + New Output is selected under Outputs. In the list of outputs, the Azure Cosmos DB tile is selected.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image54.png)
-
-3.  Specify the following configuration options in the Azure Cosmos DB output form:
-
-    a. Enter **LicensePlates** into the **database name** field.
-
-    b. Enter **NeedsManualReview** into the **collection name** field.
-
-    c. Select the **Azure Cosmos DB account connection** you created earlier.
-
-    ![In the Azure Cosmos DB output form, the following field values display: Document parameter name, outputDocument; Collection name, NeedsManualReview; Database name, LicensePlates; Azure Cosmos DB account conection, tollbooths_DOCUMENTDB.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image55.png 'Azure Cosmos DB output form')
-
-4.  Select **Save**.
 
 ### Task 7: Configure custom event types for the new Event Grid subscriptions
 
