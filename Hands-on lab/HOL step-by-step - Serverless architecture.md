@@ -79,7 +79,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
 
 ## Abstract and learning objectives
 
-In this hand-on lab, you will be challenged to implement an end-to-end scenario using a supplied sample that is based on Microsoft Azure Functions, Azure Cosmos DB, Event Grid, and related services. The scenario will include implementing compute, storage, workflows, and monitoring, using various components of Microsoft Azure. The hands-on lab can be implemented on your own, but it is highly recommended to pair up with other members at the lab to model a real-world experience and to allow each member to share their expertise for the overall solution.
+In this hand-on lab, you will be challenged to implement an end-to-end scenario using a supplied sample that is based on Microsoft Azure Functions, Azure Table Storage, Event Grid, and related services. The scenario will include implementing compute, storage, workflows, and monitoring, using various components of Microsoft Azure. The hands-on lab can be implemented on your own, but it is highly recommended to pair up with other members at the lab to model a real-world experience and to allow each member to share their expertise for the overall solution.
 
 At the end of the hands-on-lab, you will have confidence in designing, developing, and monitoring a serverless solution that is resilient, scalable, and cost-effective.
 
@@ -93,7 +93,7 @@ Below is a diagram of the solution architecture you will build in this lab. Plea
 
 ![The Solution diagram is described in the text following this diagram.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image2.png 'Solution diagram')
 
-The solution begins with vehicle photos being uploaded to an Azure Storage blobs container, as they are captured. A blob storage trigger fires on each image upload, executing the photo processing **Azure Function** endpoint (on the side of the diagram), which in turn sends the photo to the **Cognitive Services Computer Vision API OCR** service to extract the license plate data. If processing was successful and the license plate number was returned, the function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called "savePlateData". However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called "queuePlateForManualCheckup". Two separate functions are configured to trigger when new events are added to the Event Grid topic, each filtering on a specific event type, both saving the relevant data to the appropriate **Azure Cosmos DB** collection for the outcome, using the Cosmos DB output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, which is responsible for obtaining new license plate data from Cosmos DB and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all of the Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place.
+The solution begins with vehicle photos being uploaded to an Azure Storage blobs container, as they are captured. A blob storage trigger fires on each image upload, executing the photo processing **Azure Function** endpoint (on the side of the diagram), which in turn sends the photo to the **Cognitive Services Computer Vision API OCR** service to extract the license plate data. If processing was successful and the license plate number was returned, the function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called "savePlateData". However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called "queuePlateForManualCheckup". Two separate functions are configured to trigger when new events are added to the Event Grid topic, each filtering on a specific event type, both saving the relevant data to the appropriate **Table Storage** tables for the outcome, using the table storage output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, which is responsible for obtaining new license plate data from table storage and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all of the Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place.
 
 ## Requirements
 
@@ -115,7 +115,7 @@ The solution begins with vehicle photos being uploaded to an Azure Storage blobs
 
 You must provision a few resources in Azure before you start developing the solution. Ensure all resources use the same resource group for easier cleanup.
 
-In this exercise, you will provision a blob storage account using the Hot tier, and create two containers within to store uploaded photos and exported CSV files. You will then provision two Function Apps instances, one you will deploy from Visual Studio, and the other you will manage using the Azure portal. Next, you will create a new Event Grid topic. After that, you will create an Azure Cosmos DB account with two collections. Finally, you will provision a new Cognitive Services Computer Vision API service for applying object character recognition (OCR) on the license plates.
+In this exercise, you will provision a blob storage account using the Hot tier, and create two containers within to store uploaded photos and exported CSV files. You will then provision two Function Apps instances, one you will deploy from Visual Studio, and the other you will manage using the Azure portal. Next, you will create a new Event Grid topic. After that, you will create an Azure Storage account with two tables. Finally, you will provision a new Cognitive Services Computer Vision API service for applying object character recognition (OCR) on the license plates.
 
 ### Help references
 
@@ -361,8 +361,8 @@ In this task, you will apply application settings using the Microsoft Azure Port
 | computerVisionApiKey     |                                                              Computer Vision API key                                                              |
 | eventGridTopicEndpoint   |                                                             Event Grid Topic endpoint                                                             |
 | eventGridTopicKey        |                                                            Event Grid Topic access key                                                            |
-| tableStorageConnection   |                                                       Cosmos DB database id (LicensePlates)                                                       |
-| tableName                |                                                   Cosmos DB processed collection id (Processed)                                                   |
+| tableStorageConnection   |                                                       Table storage connection string (LicensePlates)                                                       |
+| tableName                |                                                   Processed data table name (Processed)                                                   |
 | exportCsvContainerName   |                                                  Blob storage CSV export container name (export)                                                  |
 | blobStorageConnection    |                                                          Blob storage connection string                                                           |
 
@@ -464,7 +464,7 @@ In this task, you will publish the Function App from the starter project in Visu
 
 **Duration**: 45 minutes
 
-Create two new Azure Functions written in .Net/C# Script, using the Azure portal. These will be triggered by Event Grid and output to Azure Cosmos DB to save the results of license plate processing done by the ProcessImage function.
+Create two new Azure Functions written in .Net/C# Script, using the Azure portal. These will be triggered by Event Grid and output to table storage to save the results of license plate processing done by the ProcessImage function.
 
 ### Help references
 
@@ -974,7 +974,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
 20. Select **Save** in the tool bar to save your Logic App.
 
-21. Select **Run** to execute the Logic App. You should start receiving email alerts because the license plate data is not being exported. This is because we need to finish making changes to the ExportLicensePlates function so that it can extract the license plate data from Azure Cosmos DB, generate the CSV file, and upload it to Blob storage.
+21. Select **Run** to execute the Logic App. You should start receiving email alerts because the license plate data is not being exported. This is because we need to finish making changes to the ExportLicensePlates function so that it can extract the license plate data from the table storage, generate the CSV file, and upload it to Blob storage.
 
     ![The Run button is selected on the Logic Apps Designer blade toolbar.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image95.png 'Logic Apps Designer blade')
 
@@ -1172,7 +1172,7 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
     ![A CSV file displays with the following columns: FileName, LicensePlateText, TimeStamp, and LicencePlateFound.](images/Hands-onlabstep-by-step-Serverlessarchitectureimages/media/image120.png 'CSV file')
 
-6.  The ExportLicensePlates function updates all of the records it exported by setting the exported value to true. This makes sure that only new records since the last export are included in the next one. Verify this by re-executing the script in Azure Cosmos DB that counts the number of documents in the Processed collection where exported is false. It should return 0 unless you've subsequently uploaded new photos.
+6.  The ExportLicensePlates function updates all of the records it exported by setting the exported value to true. This makes sure that only new records since the last export are included in the next one. 
 
 ## After the hands-on lab
 
