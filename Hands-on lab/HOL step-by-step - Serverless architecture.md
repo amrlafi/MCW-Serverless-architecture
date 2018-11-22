@@ -36,7 +36,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 1: Provision the storage account](#task-1-provision-the-storage-account)
     - [Task 2: Provision the Function Apps](#task-2-provision-the-function-apps)
     - [Task 3: Provision the Event Grid topic](#task-3-provision-the-event-grid-topic)
-    - [Task 4: Provision the Azure Cosmos DB account](#task-4-provision-the-azure-cosmos-db-account)
+    - [Task 4: Provision the Table Storage account](#task-4-provision-the-table-storage-account)
     - [Task 5: Provision the Computer Vision API service](#task-5-provision-the-computer-vision-api-service)
   - [Exercise 2: Develop and publish the photo processing and data export functions](#exercise-2-develop-and-publish-the-photo-processing-and-data-export-functions)
     - [Help references](#help-references-1)
@@ -49,9 +49,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 2: Add a Table Storage output to the SavePlateData function](#Task-2-Add-a-Table-Storage-output-to-the-SavePlateData-function)
     - [Task 3: Add an Event Grid subscription to the SavePlateData function](#task-3-add-an-event-grid-subscription-to-the-saveplatedata-function)
     - [Task 4: Create function to save manual verification info to Table Storage](#task-4-create-function-to-save-manual-verification-info-to-table-storage)
-    - [Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function](#task-5-add-an-event-grid-subscription-to-the-queueplateformanualcheckup-function)
-    - [Task 6: Add an Azure Cosmos DB output to the QueuePlateForManualCheckup function](#task-6-add-an-azure-cosmos-db-output-to-the-queueplateformanualcheckup-function)
-    - [Task 7: Configure custom event types for the new Event Grid subscriptions](#task-7-configure-custom-event-types-for-the-new-event-grid-subscriptions)
+    - [Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function](#task-5-configure-custom-event-types-for-the-new-event-grid-subscriptions)
   - [Exercise 4: Monitor your functions with Application Insights](#exercise-4-monitor-your-functions-with-application-insights)
     - [Help references](#help-references-3)
     - [Task 1: Provision an Application Insights instance](#task-1-provision-an-application-insights-instance)
@@ -674,7 +672,7 @@ In this task, you will create a new C# Script function triggered by Event Grid a
     d. Event Grid Subscription name: **queueplateformanualcheckupsub**
 
 
-### Task 7: Configure custom event types for the new Event Grid subscriptions
+### Task 5: Configure custom event types for the new Event Grid subscriptions
 
 In this task, you will configure a custom event type for each new Event Grid subscription you created for your functions in the previous steps of this exercise. Currently the event types are set to All. We want to narrow this down to only the event types specified within the SendToEventGrid class in the TollBooth solution. This will ensure that all other event types are ignored by your functions.
 
