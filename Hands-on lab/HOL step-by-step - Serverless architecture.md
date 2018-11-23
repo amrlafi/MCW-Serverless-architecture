@@ -61,7 +61,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Exercise 6: Create the data export workflow](#exercise-6-create-the-data-export-workflow)
     - [Help references](#help-references-5)
     - [Task 1: Create the Logic App](#task-1-create-the-logic-app)
-  - [Exercise 7: Configure continuous deployment for your Function App](#exercise-7-configure-continuous-deployment-for-your-function-app)
+  - [Exercise 7: Configure continuous deployment for your Function App ***(Optional)***](#exercise-7-configure-continuous-deployment-for-your-function-app)
     - [Help references](#help-references-6)
     - [Task 1: Create a GitHub repository](#task-1-create-a-github-repository)
     - [Task 2: Add GitHub repository to your Visual Studio solution](#task-2-add-github-repository-to-your-visual-studio-solution)
